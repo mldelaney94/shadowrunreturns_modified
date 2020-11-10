@@ -59,14 +59,6 @@ def pair_hashcodes_and_metadata():
 
     return hashcode_metadata_tuples
 
-def replace_hashcode_in_ELP(hashcode, replacement):
-    with open(ELP) as f:
-        newText = f.read().replace(hashcode, replacement)
-    
-    with open(ELP, 'w') as f:
-        f.write(newText)
-            
-
 if __name__ == "__main__":
    # if len(sys.argv) <= 1:
    #     print("Please input a PO language file")
@@ -74,4 +66,3 @@ if __name__ == "__main__":
 
    # LT = sys.argv[1]
    # main(LT)
-   make_comments_human_readable()
