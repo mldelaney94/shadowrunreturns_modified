@@ -1,5 +1,5 @@
 """ This program takes in a language translation (LT) in PO format, and the original
-english language PO (ELP) file (strings.po), and sorts the LT in the same
+english language POT (ELP) file (strings.pot), and sorts the LT in the same
 order as the ELP. This ensures that later language analysis can be done with some
 level of correctness wrt the order of the conversations the player will have.
 
@@ -10,13 +10,29 @@ an addon for in game, but unfortunately that would be a lot more work."""
 import sys
 import os
 import re
+import jieba
+
+from materials.cc_cedict_materials import cc_cedict_parser
 
 ELP = 'translations\\en\\Strings.pot'
 
-def main(LT):
-    en = open(ELP, 'r')
-    lt = open(LT, 'r')
-    dump = open("text.po", "w")
+def add_pinyin_to_chinese_strings():
+    word_list = []
+    jieba.set_dictionary('materials/dicts/jieba_dict_large.txt')
+    cc_cedict_parser.QUIET = True
+    zh_dict = cc_cedict_parser.parse_dict('simp')
+    with open('translations\\cn\\deadmanswitchcn.po', 'r') as f:
+        for line in f:
+            word_list = list(jieba.cut(line, cut_all=False))
+
+#TODO change cc_cedict_parser to use dictionaries for ease of reading over
+#this current thing of using digits
+
+
+
+
+
+
 
 def make_comments_human_readable():
     """The ELP has many comments that contain hashstrings. These hashstrings
@@ -24,6 +40,7 @@ def make_comments_human_readable():
     readable short description. This function replaces all hashstrings in the
     ELP with that description."""
 
+    #(hashcode, metadata) tuples
     hashcode_metadata_tuples = pair_hashcodes_and_metadata()
     with open(ELP, 'r') as f:
         newText = f.read()
@@ -60,9 +77,4 @@ def pair_hashcodes_and_metadata():
     return hashcode_metadata_tuples
 
 if __name__ == "__main__":
-   # if len(sys.argv) <= 1:
-   #     print("Please input a PO language file")
-   #     sys.exit(2)
-
-   # LT = sys.argv[1]
-   # main(LT)
+    add_pinyin_to_chinese_strings()
