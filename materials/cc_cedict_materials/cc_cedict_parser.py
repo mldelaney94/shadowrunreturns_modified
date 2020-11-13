@@ -24,7 +24,7 @@ import sys
 def parse_lines(lines):
     dictionary = {}
     for line in lines:
-        if line == '':
+        if line == '' or 'surname' in line:
             continue
         parts = get_parts_of_line(line)
         add_entry(parts, dictionary)

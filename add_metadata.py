@@ -22,11 +22,12 @@ def add_pinyin_to_chinese_strings():
     zh_dict = cc_cedict_parser.parse_dict('materials/dicts/cedict_modified.txt')
     with open('materials\\translations\\cn\\deadmanswitchcn.po', 'r') as f:
         for line in f:
-            word_list = list(jieba.cut(line, cut_all=False))
-            for word in word_list:
-                if word in zh_dict:
-                    print(word)
-                    print(zh_dict[word]['pinyin'])
+            if 'msgstr ""' in line:
+
+            elif 'msgstr' in line:
+                word_list = list(jieba.cut(line, cut_all=False))
+                
+
 
 def make_comments_human_readable():
     """The ELP has many comments that contain hashstrings. These hashstrings
