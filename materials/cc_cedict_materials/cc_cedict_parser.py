@@ -10,9 +10,6 @@ information at the top. Otherwise the program will try to parse it and you
 will get an error message.
 
 Characters that are commonly used as surnames have two entries in CC-CEDICT.
-
-This code was written by Franki Allegra in February 2020. Edited by Matthew Delaney February 2020
-https://github.com/rubber-duck-dragon/rubber-duck-dragon.github.io/blob/master/cc-cedict_parser/parser.py
 """
 
 
@@ -21,14 +18,17 @@ from pathlib import Path
 
 #define functions
 
-#builds a dictionary with a trad or simp character as the key
-def parse_lines(lines, key_is_trad_or_simp):
+#builds a dictionary with a simp character as the key
+#the key accesses a dictionary of attributes - pinyin, and english definition
+#dictionary[key]['pinyin'] accesses a list
+#dictionary[key]['english'] also accesses a list
+def parse_lines(lines):
     dictionary = {}
     for line in lines:
         if line == '':
             continue
         parts = get_parts_of_line(line)
-        add_entry(parts, dictionary, key_is_trad_or_simp)
+        add_entry(parts, dictionary)
     
     return dictionary
 
@@ -42,7 +42,6 @@ def get_parts_of_line(line):
     pinyin_hanzi = line[0].split('[')
     hanzi = pinyin_hanzi[0]
     hanzi = hanzi.split(' ')
-    parts['trad_hanzi'] = hanzi[0]
     parts['simp_hanzi'] = hanzi[1]
     
     pinyin = pinyin_hanzi[1]
@@ -52,54 +51,35 @@ def get_parts_of_line(line):
     return parts
     
 #no return deliberately
-def add_entry(parts, dictionary, key_is_trad_or_simp):
-    if key_is_trad_or_simp == 'trad':
-        key = parts['trad_hanzi']
-        non_key = parts['simp_hanzi']
-    else:
-        key = parts['simp_hanzi']
-        non_key = parts['trad_hanzi']
+def add_entry(parts, dictionary):
+    key = parts['simp_hanzi']
 
     pinyin = parts['pinyin']
     english = parts['english']
-    attrib_list = []
 
     if key in dictionary:
-        attrib_list = dictionary[key]
         for part in english:
-            attrib_list.append(part)
-        dictionary[key] = attrib_list
+            dictionary[key]['english'].append(part)
     else:
-        attrib_list.append(non_key)
-        attrib_list.append(pinyin)
-        for part in english:
-            attrib_list.append(part)
-        dictionary[key] = attrib_list
+        dictionary[key] = {} 
+        dictionary[key]['pinyin'] = pinyin
+        dictionary[key]['english'] = english
 
-def parse_dict(key_is_trad_or_simp):
+def parse_dict():
     #make each line into a dictionary
-    if not QUIET:
-        print("Parsing dictionary . . .")
     with open(get_dict_path(), 'r') as f:
         text = f.read()
         lines = text.split('\n')
-        dictionary = parse_lines(lines, key_is_trad_or_simp)
-    if not QUIET:
-        print("Done")
+        dictionary = parse_lines(lines)
+    print("Done")
 
     return dictionary
 
 def get_dict_path():
     """ This function assumes that the path of the dictionary is relatively set
     in stone """
-    return Path("materials/dicts/cedict_modified.txt")
+    return Path("../dicts/cedict_modified.txt")
 
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        print("Please type 'trad' or 'simp' as first argument depending on"
-                " how you want the dictionary to be built.")
-        exit()
-    global QUIET
-    QUIET = True
-    parsed_dict = parse_dict(sys.argv[1])
+    parsed_dict = parse_dict()
     print(parsed_dict)
