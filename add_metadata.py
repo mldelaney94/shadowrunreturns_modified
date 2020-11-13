@@ -19,20 +19,14 @@ ELP = 'translations\\en\\Strings.pot'
 def add_pinyin_to_chinese_strings():
     word_list = []
     jieba.set_dictionary('materials/dicts/jieba_dict_large.txt')
-    cc_cedict_parser.QUIET = True
-    zh_dict = cc_cedict_parser.parse_dict('simp')
-    with open('translations\\cn\\deadmanswitchcn.po', 'r') as f:
+    zh_dict = cc_cedict_parser.parse_dict('materials/dicts/cedict_modified.txt')
+    with open('materials\\translations\\cn\\deadmanswitchcn.po', 'r') as f:
         for line in f:
             word_list = list(jieba.cut(line, cut_all=False))
-
-#TODO change cc_cedict_parser to use dictionaries for ease of reading over
-#this current thing of using digits
-
-
-
-
-
-
+            for word in word_list:
+                if word in zh_dict:
+                    print(word)
+                    print(zh_dict[word]['pinyin'])
 
 def make_comments_human_readable():
     """The ELP has many comments that contain hashstrings. These hashstrings

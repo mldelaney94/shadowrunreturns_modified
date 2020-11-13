@@ -14,7 +14,6 @@ Characters that are commonly used as surnames have two entries in CC-CEDICT.
 
 
 import sys
-from pathlib import Path
 
 #define functions
 
@@ -65,20 +64,14 @@ def add_entry(parts, dictionary):
         dictionary[key]['pinyin'] = pinyin
         dictionary[key]['english'] = english
 
-def parse_dict():
+def parse_dict(path):
     #make each line into a dictionary
-    with open(get_dict_path(), 'r') as f:
+    with open(path, 'r') as f:
         text = f.read()
         lines = text.split('\n')
         dictionary = parse_lines(lines)
-    print("Done")
 
     return dictionary
-
-def get_dict_path():
-    """ This function assumes that the path of the dictionary is relatively set
-    in stone """
-    return Path("../dicts/cedict_modified.txt")
 
 if __name__ == "__main__":
     parsed_dict = parse_dict()
