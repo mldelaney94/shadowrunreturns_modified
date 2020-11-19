@@ -49,6 +49,7 @@ def add_pinyin_to_chinese_strings():
                 g.write(format_pinyin_into_paragraphs(pinyin_list))
             else:
                 g.write(line)
+            print(line)
 
     g.close()
                 
@@ -123,7 +124,7 @@ def remove_unwanted_parts_from_fsentence(formatted_sent):
             "特里斯坦": "Te4li3si1tan3", "Ha1li4 奎因": "Ha1li4 Kui2yin1",
             "霍灵斯": "Huo4ling2si1", "默斯 man4": "Mo4si1man4",
             "埃克": "Ai1ke4", "深表同情": "shen1biao3tong2qing2",
-            "豆制": "dou4zhi4", "趴下": "Pa1xia4", "多德": "Duo1de2",
+            "豆制": "dou4zhi4", "趴下": "pa1xia4", "多德": "Duo1de2",
             "通讯器": "tong1xun4qi4", "盲眼": "mangyan3", "巨魔": "ju4mo2",
             "神经中枢": "shen2jing1 zhong1shu1",
             "（ ": "（", " ）": "）",

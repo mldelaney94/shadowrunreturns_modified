@@ -22674,7 +22674,7 @@ msgstr "就这点来说的话，我这有批自定义模组没准你会感兴趣
 
 msgid "On the ground, now!"
 msgstr "趴下，快点！"
-"Pa1xia4，kuai4dian3 ！"
+"pa1xia4，kuai4dian3 ！"
 
 msgid ""
 "On the lower bunk is a draft of a letter:\n"
@@ -35749,7 +35749,7 @@ msgstr "你，你！这里禁止通过！码头那边……那边发生了煤气
 msgid ""
 "YOUR APARTMENT, 2054. It’s 3:00 a.m. and you’ve got nowhere to go but down."
 msgstr "你的公寓，2054年。现在是凌晨三点，你除了趴下外无事可做。"
-"ni3 de5 gong1yu4，2054 nian2。xian4zai4 shi4 ling2chen2 三点，ni3 chu2le5 Pa1xia4 外无事 ke3 zuo4。"
+"ni3 de5 gong1yu4，2054 nian2。xian4zai4 shi4 ling2chen2 三点，ni3 chu2le5 pa1xia4 外无事 ke3 zuo4。"
 
 msgid "YOUR SQUAT, 2054. Anywhere but Seattle. You’re talking to a dead man."
 msgstr "你的下榻处，2054年，西雅图之外的某个地方。你正和一个死人交谈。"
