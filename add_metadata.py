@@ -20,6 +20,8 @@ def add_pinyin_to_chinese_strings():
     jieba.set_dictionary('materials/dicts/jieba_dict_large.txt')
     zh_dict = cc_cedict_parser.parse_dict('materials/dicts/cedict_modified.txt')
 
+    print(list(jieba.cut("你好", cut_all=False)))
+
     g = open("test.po", "w")
     with open('materials\\translations\\cn\\deadmanswitchcn.po', 'r') as f:
         while (line := f.readline()):
@@ -49,7 +51,6 @@ def add_pinyin_to_chinese_strings():
                 g.write(format_pinyin_into_paragraphs(pinyin_list))
             else:
                 g.write(line)
-            print(line)
 
     g.close()
                 
@@ -124,6 +125,7 @@ def remove_unwanted_parts_from_fsentence(formatted_sent):
             "特里斯坦": "Te4li3si1tan3", "Ha1li4 奎因": "Ha1li4 Kui2yin1",
             "霍灵斯": "Huo4ling2si1", "默斯 man4": "Mo4si1man4",
             "埃克": "Ai1ke4", "拉瑞": "la1rui4", "多德": "Duo1de2",
+            "德莱斯 deng1": "De2lai2si1deng1",
             "深表同情": "shen1biao3tong2qing2",
             "豆制": "dou4zhi4", "趴下": "pa1xia4", 
             "通讯器": "tong1xun4qi4", "盲眼": "mangyan3", "巨魔": "ju4mo2",
@@ -147,6 +149,8 @@ def remove_unwanted_parts_from_fsentence(formatted_sent):
             "伤己": "shang1 ji3", "糜乱": "mu2 luan4",
             "付出代价": "fu4chu1 dai4jia4", "十万": "shi2wan4",
             "一大堆": "yi1 da4 dui1",  "一枚": "yi1 mei2",
+            "扫清": "sao3qing1", "si3wang2 发讯": "si3wang2fa1xun4",
+            "发讯": "fa1xun4", "手术刀": "shou3shu4dao1",
             "（ ": "（", " ）": "）",
             " { { GM } } ": "{{GM}}", " { { /GM } } ": "{{/GM}}",
             "{ { / GM } }": "{{/GM}}", "{ { GM } }": "{{GM}}",
