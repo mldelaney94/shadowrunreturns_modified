@@ -1,12 +1,7 @@
-""" This program takes in a language translation (LT) in PO format, and the original
-english language POT (ELP) file (strings.pot), and sorts the LT in the same
-order as the ELP. This ensures that later language analysis can be done with some
-level of correctness wrt the order of the conversations the player will have.
+"""Takes in the chinese translation of ShadowRun Returns and outputs a version
+of the file that has pinyin added
 
-For instance, if we want to know if the player has seen a word before, we need
-to know everything the player has seen until now. This would be nice to create
-an addon for in game, but unfortunately that would be a lot more work."""
-
+Matthew Delaney 23/01/2021"""
 import sys
 import os
 import re
@@ -26,7 +21,7 @@ def add_pinyin_to_chinese_strings():
             pinyin_list = []
             paragraph = []
             word_list = []
-            if 'msgstr ""' in line: #lots of missing lines of this type
+            if 'msgstr ""' in line:
                 g.write(line)
                 while (line := f.readline()) != '\n': #load paragraph
                     g.write(line)
@@ -62,6 +57,7 @@ def get_pinyin_from_characters(zh_dict, list_of_sents):
             else:
                 for character in word:
                     if character < u'\u9fff' and character > u'\u4e00':
+                        #unicode range for chinese characters
                         pinyin.append(zh_dict[character]['pinyin'])
                     else:
                         pinyin.append(character)
@@ -151,8 +147,6 @@ def format_fsentence(formatted_sent):
     for pattern in regex_patterns:
         if re.match(pattern, formatted_sent):
             formatted_sent = ""
-
-            
 
     return formatted_sent
 
