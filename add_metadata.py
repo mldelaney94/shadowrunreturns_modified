@@ -20,8 +20,6 @@ def add_pinyin_to_chinese_strings():
     jieba.set_dictionary('materials/dicts/jieba_dict_large.txt')
     zh_dict = cc_cedict_parser.parse_dict('materials/dicts/cedict_modified.txt')
 
-    print(list(jieba.cut("你好", cut_all=False)))
-
     g = open("test.po", "w")
     with open('materials\\translations\\cn\\deadmanswitchcn.po', 'r') as f:
         while (line := f.readline()):
@@ -62,7 +60,11 @@ def get_pinyin_from_characters(zh_dict, list_of_sents):
             if word in zh_dict:
                 pinyin.append(zh_dict[word]['pinyin'])
             else:
-                pinyin.append(word)
+                for character in word:
+                    if character < u'\u9fff' and character > u'\u4e00':
+                        pinyin.append(zh_dict[character]['pinyin'])
+                    else:
+                        pinyin.append(character)
 
     return pinyin
 
@@ -73,89 +75,71 @@ def format_pinyin_into_paragraphs(pinyin_strings):
         fsentence.append(' '.join(element))
 
     for sentence in fsentence:
-        new_sent = remove_unwanted_parts_from_fsentence(sentence)
+        new_sent = format_fsentence(sentence)
         fsentence.append(new_sent)
         fsentence.remove(sentence)
 
     return '\n'.join(fsentence)
 
-def remove_unwanted_parts_from_fsentence(formatted_sent):
+"""Shows names more clearly in the pinyin, and formats various parts of the
+strings to look pretty"""
+def format_fsentence(formatted_sent):
     # Be careful the dictionary values and keys are all unique, if a key
     # and value are the same somewhere, you could get unintended replaces
     removal_dict = {
-            "msgstr   ": "", "。 ": "。", " 。": "。", "， ": "，",
+            "msgstr   ": "", "m s g s t r  ": "", "。 ": "。", " 。": "。", "， ": "，",
             " ，": "，", " ： ": "：", " \\ n": "\\n", "\\ n": "\\n",
+            " ！": "！",
             " \\ ": "\\", " \"": "\"", " !": "!", " ？": "？", "\" ": "\"",
             " - ": "-", "> ": ">", " , ": ",", " — — ": "——", " -- > ": "-->",
-            "* * * ": "***", "“ ": "“", " ”": "”",
+            "* * * ": "***", "“ ": "“", " ”": "”", " … …": "……",
             "\"¥ 9,000。\"\n": "",
-            "$ ( l . name )": "$(l.name)", "$ ( l . sir )": "$(l.sir)",
-            "$ ( s . name )": "$(s.name)", "$ + ( l . honorific )":
-            "$+(l.honorific)", "$ + ( l . name )": "$+(l.name)",
-            "$ ( l . man )": "$(l.man)", "$ ( l . guy )": "$(l.guy)",
-            "$ ( s . man )": "$(s.man)", "$ ( s . guy )": "$(s.guy)",
-            "$ ( l . Race )": "$(l.Race)", "$ ( l . Sir )": "$(l.Sir)",
-            "$ + ( l . guy )": "$+(l.guy)", "$ ( l . Name )": "$(l.Name)",
-            "$ ( l . race )": "$(l.race)", "$ + ( l . sir )": "$+(l.sir)",
-            "$ ( l . race _ plural )": "$(l.race_plural)",
-            "$ + ( l . race _ plural )": "$+(l.race_plural)",
-            "$ ( l . him )": "$(l.him)", "$ ( l . he )": "$(l.he)",
-            "$ ( l . his )": "$(l.his)", "$ + ( l . he )": "$+(l.he)",
-            "$ ( l . sex )": "$(l.sex)", "$ ( s . Name )": "$(s.Name)",
-            "$ ( scene . BroSis )": "$(scene.BroSis)",
-            "$ ( scene . FatherMother )": "$(scene.FatherMother)",
-            "$ ( scene . TalkAbout )": "$(scene.TalkAbout)",
-            "帕科": "Pa4ke1", "麦库卢斯基": "Mai4ku4lu2si1ji1",
-            "名歌手": "ming2 ge1shou3", "梅库": "Mei2ku4",
-            "埃里克": "Ai1li3ke4", "银星": "Yin2xing1", "凯约": "Kai3yue1",
-            "杰 希卡": "Jie2xi1ka3", "莫妮卡": "Mo4ni1ka3",
-            "吉诺": "Ji2nuo4", "威尔斯": "Wei1er3si1", "求求": "qiu2qiu2",
-            "救救": "jiu4jiu4", "波特兰": "Bo1te4lan2",
-            "很多": "hen3duo1", "开膛手": "kai1tang2shou3", "毋": "wu2",
-            "狂奔": "kuang2ben1", "莱克": "Lai2ke4",
-            "fu2 斯伯格": "Fu2si1bo2ge2", "沉醉": "chen2zui4",
-            "山姆": "Shan1mu3", "华兹": "Hua2zi1", "萨米 di4": "Sa4mi3di4",
-            "萨米 蒂": "Sa4mi3di4", "姗戈玛": "Shan1ge1ma3",
-            "库波塔": "Ku4bo1ta3", "贾马尔": "Jia3ma3er3", "萨利": "Sa4li4",
-            "灵体们": "Ling2ti3men", "巴隆": "Ba1long2",
-            "空统 shi4 xiong1di4hui4": "Kong1tong3shi4xiong1di4hui4",
-            "统世 xiong1di4hui4": "Tong3shi4xiong1di4hui4",
-            " 崔斯坦 ": "cui1si1tan3", "予梅琳 da2": "Yu3mei2lin2da2",
-            "精神病院": "jing1shen2bing4yuan4", "库鲁": "Ku4lu3",
-            "特里斯坦": "Te4li3si1tan3", "Ha1li4 奎因": "Ha1li4 Kui2yin1",
-            "霍灵斯": "Huo4ling2si1", "默斯 man4": "Mo4si1man4",
-            "埃克": "Ai1ke4", "拉瑞": "la1rui4", "多德": "Duo1de2",
-            "德莱斯 deng1": "De2lai2si1deng1",
-            "深表同情": "shen1biao3tong2qing2",
-            "豆制": "dou4zhi4", "趴下": "pa1xia4", 
-            "通讯器": "tong1xun4qi4", "盲眼": "mangyan3", "巨魔": "ju4mo2",
-            "神经中枢": "shen2jing1 zhong1shu1", "纽拉瑞": "Niu3la1rui4",
-            "从未见过": "cóngwèi jiànguò", "一个": "yi1 ge4",
-            "一片": "yi1 pian4", "酸液": "suan1 ye4", "弄成": "nong4cheng2",
-            "并不知道": "bing4bu4 zhi1dao4", "喝得": "he1de5",
-            "太醉": "tai4 zui4", "从未有过": "cong2wei4you3guo4",
-            "那次": "na4ci4", "买来": "mai3lai2",
-            "废话少说": "fei4hua4 shao3shuo1", "一笑": "yi1 xiao4",
-            "一整天": "yi1 zheng3tian1", "抖个": "dou3 ge4",
-            "真的": "zhen1 de5",
-            "联络网": "lian2luo4wang3", "扔出": "reng1 chu1",
-            "一丝": "yi1 si1", "那家伙": "na4 jia1huo5",
-            "烧成灰": "shao1cheng2hui1", "舔着": "tian3 zhe5",
-            "举起手来": "ju3qi3 shou3lai2", "脸上": "lian3shang4",
-            "并不需要": "bing4bu4 xu1yao4", "一杯": "yi1 bei1",
-            "绝不会": "jue2bu4 hui4", "不论如何": "bu4lun4 ru2he2",
-            "最佳人家": "zui4jia1 ren2jia5", "发讯器": "fa1 xun4 qi4",
-            "同生": "tong2sheng1", "释罪": "shi4 zui4", "发话": "fa1hua4",
-            "伤己": "shang1 ji3", "糜乱": "mu2 luan4",
-            "付出代价": "fu4chu1 dai4jia4", "十万": "shi2wan4",
-            "一大堆": "yi1 da4 dui1",  "一枚": "yi1 mei2",
-            "扫清": "sao3qing1", "si3wang2 发讯": "si3wang2fa1xun4",
-            "发讯": "fa1xun4", "手术刀": "shou3shu4dao1",
+            " $ ( l . n a m e )": "$(l.name)", " $ ( l . s i r )": "$(l.sir)",
+            " $ ( s . n a m e )": "$(s.name)",
+            " $ + ( l . h o n o r i f i c )": "$+(l.honorific)",
+            " $ + ( l . n a me )": "$+(l.name)",
+            " $ ( l . m a n )": "$(l.man)", " $ ( l . g u y )": "$(l.guy)",
+            " $ ( s . m a n )": "$(s.man)", " $ ( s . g u y )": "$(s.guy)",
+            " $ ( l . R a c e )": "$(l.Race)", " $ ( l . S i r )": "$(l.Sir)",
+            " $ + ( l . g u y )": "$+(l.guy)", " $ ( l . N a m e )": "$(l.Name)",
+            " $ ( l . r a c e )": "$(l.race)", " $ + ( l . s i r )": "$+(l.sir)",
+            " $ ( l . r a c e _ p l u r a l )": "$(l.race_plural)",
+            " $ + ( l . r a c e _ p l u r a l )": "$+(l.race_plural)",
+            " $ ( l . h i m )": "$(l.him)", " $ ( l . h e )": "$(l.he)",
+            " $ ( l . h e )": "$(l.he)",
+            " $ ( l . h i s )": "$(l.his)", " $ + ( l . h e )": "$+(l.he)",
+            " $ ( l . s e x )": "$(l.sex)", " $ ( s . N a m e )": "$(s.Name)",
+            " $ ( s c e n e . B r o S i s )": "$(scene.BroSis)",
+            " $ ( s c e n e . F a t h e r M o t h e r )  ": "$(scene.FatherMother)",
+            " $ ( s c e n e . T a l k A b o u t ) ": "$(scene.TalkAbout)",
+            "pa4 ke1": "Pa4ke1", "mai4 ku4 lu2 Si1 ji1": "Mai4ku4lu2si1ji1",
+            "mei2 ku4": "Mei2ku4",
+            "Ai1 li3 ke4": "Ai1li3ke4", "yin2 xing1": "Yin2xing1",
+            "kai3 yue1 ti2": "Kai3yue1ti2",
+            "jie2 xi1 ka3": "Jie2xi1ka3", "mo4 ni1 ka3": "Mo4ni1ka3",
+            "ji2 nuo4": "Ji2nuo4", "wei1 er3 Si1": "Wei1er3si1",
+            "Bo1 te4 lan2": "Bo1te4lan2",
+            "lai2 ke4": "Lai2ke4", "xi1 la1 Si1": "Xi1la1si1",
+            "fu2 Si1 ba4 ge2": "Fu2si1bo2ge2",
+            "shan1 mu3": "Shan1mu3", "Hua2 zi1": "Hua2zi1", "sa4 mi3 di4": "Sa4mi3di4",
+            "shan1 ge1 ma3": "Shan1ge1ma3",
+            "ku4 Bo1 ta3": "Ku4bo1ta3", "gu3 ma3 er3": "Jia3ma3er3", "sa4 li4": "Sa4li4",
+            "ba1 long1": "Ba1long2",
+            "kong1 tong3 shi4": "Kong1tong3shi4",
+            "xiong1di4hui4": "Xiong1di4hui4",
+            "yu2 mei2 lin2 da2": "Yu3mei2 Lin2da2",
+            "ku4 lu3": "Ku4lu3", "ha1 li4 Bo1 te4": "Ha1li4 Bo1te4",
+            "te4 li3 Si1 tan3": "Te4li3si1tan3", "Ha1li4 kui2 yin1": "Ha1li4kui2yin1",
+            "huo4 ling2 Si1": "Huo4ling2si1", "mo4 Si1 man4": "Mo4si1man4",
+            "Ai1 ke4": "Ai1ke4", "la1 rui4": "La1rui4", "duo1 De2": "Duo1de2",
+            "De2 lai2 Si1 deng1": "De2lai2si1deng1",
+            "niu3 la1 rui4": "Niu3la1rui4",
+            "A1 er3 jie2 nong2": "A1'er3jie2nong2", "A1 li4 ke4 Si1": "A1li4ke4si1",
             "（ ": "（", " ）": "）",
-            " { { GM } } ": "{{GM}}", " { { /GM } } ": "{{/GM}}",
-            "{ { / GM } }": "{{/GM}}", "{ { GM } }": "{{GM}}",
-            " { { / GM } }": "{{/GM}}", "{ { CC } }": "{{CC}}",
-            "{ { / CC } }": "{{/CC}}",
+            " { { G M } } ": "{{GM}}", " { { / G M } } ": "{{/GM}}",
+            "{ { / G M } }": "{{/GM}}", "{ { G M } }": "{{GM}}",
+            " { { / G M } }": "{{/GM}}", "{ { C C } }": "{{CC}}",
+            "{ { / C C } }": "{{/CC}}",
     }
 
     regex_patterns = ["\"SEA\d\d\d-\d\d\d\"", "\"c\d\d _ Test.*\""]
@@ -167,6 +151,8 @@ def remove_unwanted_parts_from_fsentence(formatted_sent):
     for pattern in regex_patterns:
         if re.match(pattern, formatted_sent):
             formatted_sent = ""
+
+            
 
     return formatted_sent
 
