@@ -49,5 +49,23 @@ def stitch_chunks(top_chunks, bottom_chunks):
 
     return final_po
 
+def stitch_english():
+    chunks = chunk_file(get_file_path('fr'))
+    chunk_counter = 0
+    final_po = ''
+    while(chunk_counter < 6679): #every file has 6679 chunks
+        top = ''.join(chunks[chunk_counter])
+        top = top.split('msgstr')
+        top[1] = top[0]
+        top[1] = top[1].replace('msgid', 'msgstr')
+        final_po += ''.join(top) + '\n'
+
+        chunk_counter += 1
+
+    with open('en_deadmanswitch.po', 'w+') as f:
+        f.write(final_po)
+
+
 if __name__ == '__main__':
-    combine_languages('it', 'ru')
+    stitch_english()
+    #combine_languages('it', 'ru')
